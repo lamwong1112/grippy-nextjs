@@ -38,12 +38,15 @@ export default async function CmsPage({ params }: PageProps) {
   if (!page) notFound();
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 md:py-16">
+    <article className="mx-auto max-w-3xl px-4 py-12 md:py-20">
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-salt">
+        Grippy
+      </p>
       <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-5xl">
         {page.title}
       </h1>
       <div
-        className="prose-wp mt-8"
+        className="prose-wp mt-10 border-t border-border pt-10"
         dangerouslySetInnerHTML={{ __html: page.content }}
       />
     </article>

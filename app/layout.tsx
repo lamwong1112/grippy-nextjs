@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { DM_Sans, Syne } from "next/font/google";
+import { Figtree, Syne } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getPrimaryMenu, getSiteSettings } from "@/lib/graphql";
+import { getSiteSettings } from "@/lib/graphql";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
 });
 
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
     default: "Grippy",
     template: "%s · Grippy",
   },
-  description: "Modern D2C storefront powered by WooCommerce.",
+  description:
+    "Sustainable climbing chalk from seawater — built for Hong Kong humidity. Zero mining, cleaner grip, direct to climbers.",
 };
 
 export default async function RootLayout({
@@ -29,15 +30,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let siteTitle = "Grippy";
-  let menuItems: Awaited<ReturnType<typeof getPrimaryMenu>> = [];
 
   try {
-    const [settings, menu] = await Promise.all([
-      getSiteSettings(),
-      getPrimaryMenu(),
-    ]);
+    const settings = await getSiteSettings();
     siteTitle = settings.title || "Grippy";
-    menuItems = menu;
   } catch {
     // WPGraphQL may be unavailable during build; use fallbacks.
   }
@@ -45,10 +41,10 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${syne.variable} h-full antialiased`}
+      className={`${figtree.variable} ${syne.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
-        <SiteHeader siteTitle={siteTitle} menuItems={menuItems} />
+        <SiteHeader siteTitle={siteTitle} />
         <main className="flex-1">{children}</main>
         <SiteFooter />
       </body>

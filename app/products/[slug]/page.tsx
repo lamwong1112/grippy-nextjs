@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { ProductGallery } from "@/components/product-gallery";
+import { WaitlistForm } from "@/components/waitlist-form";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
 import {
@@ -47,6 +48,7 @@ export default async function ProductPage({ params }: PageProps) {
       ? await getProductVariations(product.id).catch(() => [])
       : [];
 
+  const outOfStock = product.stock_status === "outofstock";
   const stockLabel =
     product.stock_status === "instock"
       ? "In stock"
@@ -90,7 +92,16 @@ export default async function ProductPage({ params }: PageProps) {
           />
         )}
 
-        <AddToCartButton product={product} variations={variations} />
+        {outOfStock ? (
+          <div className="flex flex-col gap-3 border border-border bg-secondary/40 p-5">
+            <p className="text-sm text-muted-foreground">
+              This pack is sold out. Join the waitlist for restock news.
+            </p>
+            <WaitlistForm />
+          </div>
+        ) : (
+          <AddToCartButton product={product} variations={variations} />
+        )}
 
         {product.description && (
           <div className="border-t border-border pt-6">

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { ProductPlaceholder } from "@/components/product-placeholder";
 import { cn } from "@/lib/utils";
 import type { ProductImage } from "@/types";
 
@@ -16,8 +17,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   if (!current) {
     return (
-      <div className="flex aspect-square items-center justify-center bg-muted text-muted-foreground">
-        No image available
+      <div className="aspect-square overflow-hidden">
+        <ProductPlaceholder name={productName} />
       </div>
     );
   }
@@ -45,7 +46,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               className={cn(
                 "relative aspect-square overflow-hidden bg-muted ring-offset-background transition-all",
                 active === index
-                  ? "ring-2 ring-foreground"
+                  ? "ring-2 ring-ink"
                   : "opacity-70 hover:opacity-100"
               )}
               aria-label={`View image ${index + 1}`}

@@ -52,7 +52,13 @@ async function ShopCatalog({
     order,
   }).catch(() => []);
 
-  return <ProductGrid products={products} />;
+  return (
+    <ProductGrid
+      products={products}
+      showWaitlistWhenEmpty
+      emptyMessage="Nothing in the shop right now. Join the waitlist for the next drop."
+    />
+  );
 }
 
 export default async function ShopPage({
@@ -67,10 +73,11 @@ export default async function ShopPage({
     <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
       <div className="mb-10">
         <h1 className="font-heading text-3xl font-semibold tracking-tight md:text-4xl">
-          Shop
+          Shop chalk
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Filter by category, sort by price or popularity.
+        <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+          Climate-ready packs for humid gyms. Filter by category or sort by
+          price.
         </p>
       </div>
 

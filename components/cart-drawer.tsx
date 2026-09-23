@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ProductPlaceholder } from "@/components/product-placeholder";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -129,7 +130,9 @@ export function CartDrawer() {
                           sizes="80px"
                           className="object-cover"
                         />
-                      ) : null}
+                      ) : (
+                        <ProductPlaceholder name="" className="p-2" />
+                      )}
                     </Link>
                     <div className="flex min-w-0 flex-1 flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">

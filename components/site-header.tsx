@@ -1,56 +1,30 @@
 import Link from "next/link";
 import { CartDrawer } from "@/components/cart-drawer";
-import type { WPMenuItem } from "@/types";
 
 interface SiteHeaderProps {
-  siteTitle: string;
-  menuItems?: WPMenuItem[];
+  siteTitle?: string;
 }
 
-const fallbackNav = [
+const brandNav = [
   { href: "/shop", label: "Shop" },
-  { href: "/about", label: "About" },
+  { href: "/#story", label: "Story" },
+  { href: "/#waitlist", label: "Waitlist" },
 ];
 
-export function SiteHeader({ siteTitle, menuItems = [] }: SiteHeaderProps) {
-  const nav =
-    menuItems.length > 0
-      ? menuItems
-          .filter((item) => !item.parentId)
-          .map((item) => ({
-            href: item.path?.startsWith("http")
-              ? item.path
-              : item.path || "/",
-            label: item.label,
-            external: item.path?.startsWith("http"),
-          }))
-      : fallbackNav.map((item) => ({ ...item, external: false }));
-
+export function SiteHeader({ siteTitle = "Grippy" }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+    <header className="sticky top-0 z-40 border-b border-border/50 bg-background/75 backdrop-blur-md">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <nav className="hidden items-center gap-6 text-sm md:flex">
-          {nav.map((item) =>
-            item.external ? (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-muted-foreground transition-colors hover:text-foreground"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {item.label}
-              </a>
-            ) : (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            )
-          )}
+          {brandNav.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <Link
@@ -60,12 +34,18 @@ export function SiteHeader({ siteTitle, menuItems = [] }: SiteHeaderProps) {
           {siteTitle || "Grippy"}
         </Link>
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-3">
           <Link
             href="/shop"
-            className="mr-1 hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground md:hidden"
           >
             Shop
+          </Link>
+          <Link
+            href="/about"
+            className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:inline"
+          >
+            About
           </Link>
           <CartDrawer />
         </div>

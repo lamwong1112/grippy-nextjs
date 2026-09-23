@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "www.grippy.io",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };
