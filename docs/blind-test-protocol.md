@@ -73,7 +73,8 @@ In WordPress: **Settings → Blind Test**
 4. Confirm gym list and default round
 5. Share PIN with floor staff privately
 6. Share access key only with people who need lab/results
-7. Confirm Vercel has `BLIND_TEST_ACCESS_KEY` (redeploy after adding)
+
+Hosting / env issues: see **Lead / tech only** below.
 
 ---
 
@@ -139,15 +140,76 @@ Diff &lt; 0.3 → treat as no significant difference; prefer stability and cost.
 
 ---
 
-## Troubleshooting
+## FAQ (team)
 
-| Symptom | Fix |
-|---------|-----|
-| Wrong PIN | Check WP Settings PIN — not the access key |
-| `BLIND_TEST_ACCESS_KEY is not set` | Add env on Vercel and Redeploy |
-| Incorrect access key | Value mismatch with env |
-| No sample buttons | Enable samples in WP settings |
-| Climber asks for the ratio | Do not answer; decode later on results |
+### Everyone / climber
+
+**Which page should I open?**  
+Scoring bags → `/blind-test`. Lab numbers → `/blind-test/lab`. Rankings & CSV → `/blind-test/results`. Learning the rules → `/blind-test/guide`.
+
+**What is the PIN vs the access key?**  
+The 4-digit PIN unlocks gym scoring for climbers. The access key unlocks lab and results for internal staff only. Never share the access key on the floor.
+
+**Someone asked what ratio Sample A is — what do I say?**  
+Do not answer. Blindness is the point. Ratios are decoded later on `/blind-test/results` by the lead or analysis team.
+
+**PIN wrong or locked out — who do I ask?**  
+Ask the test lead. They set the PIN in WordPress → Settings → Blind Test. Do not guess the access key on the gym page.
+
+**Can I change a score after Save?**  
+Not from the phone form. Tell the lead — they can review entries in WordPress → Blind Scores and decide whether to re-score.
+
+**Skip vs score 3 — what’s the difference?**  
+Skip / N/A means you did not rate that criterion (left out of the weighted average). Score 3 means you rated it as average. Prefer Skip only when you truly could not judge that item.
+
+**How many samples do I need to finish today?**  
+Score every sample letter shown on the gym page (bags enabled for this session). Ask the lead if unsure.
+
+### Lead
+
+**Where do I change today’s PIN and which samples are enabled?**  
+WordPress Admin → Settings → Blind Test. Update PIN, enable sample codes, map ratios, Save. Tell the floor the new PIN.
+
+**Someone submitted the same Sample twice — is that OK?**  
+Yes. Extra submissions are kept and averaged. Clear mistakes can be noted / removed in Blind Scores by the lead.
+
+**How do I start a new session or round without confusing the team?**  
+Announce Round (R1/R2/R3) and gym before scoring. Update WP default round or PIN if the session changes. Climbers must pick the correct Round on the gym form.
+
+### Lab
+
+**Can I leave a cell empty?**  
+Yes. Analysis only uses entered values — leave blanks rather than guessing.
+
+**I saved the wrong Pass/Fail — how do I fix it?**  
+Correct the gate on `/blind-test/lab` for that ratio and round, then Save again (same row is updated).
+
+**Do R1 / R2 / R3 need separate rows?**  
+Yes. Use the Round tabs and save each round separately for multi-round averages and stability.
+
+### Analysis
+
+**Why is a blend missing from the ranking?**  
+Usually no gym scores yet, or a hard-gate Fail excluded it. Check Blind Scores / Lab Data and the Gate column on Results.
+
+**What does “diff < 0.3” mean in practice?**  
+Treat those blends as a performance tie. Prefer lower SD (stability) or lower cost instead of a tiny score winner.
+
+**Who can see the CSV and decoded ratios?**  
+Only people with the access key. Do not forward decoded CSVs or `/blind-test/results` to climbers.
+
+---
+
+## Lead / tech only
+
+Skip this if you are scoring bags on the floor.
+
+| Issue | Fix |
+|-------|-----|
+| Lab/Results says access key is not set | Add `BLIND_TEST_ACCESS_KEY` on Vercel (match `.env.local`), then Redeploy |
+| Incorrect access key | Typed value ≠ env value; confirm with whoever manages hosting |
+| Gym save fails / plugin errors | Activate Grippy Blind Test plugin; check WP Application Password |
+| No sample buttons on gym form | Enable sample codes in WP → Settings → Blind Test |
 
 ---
 

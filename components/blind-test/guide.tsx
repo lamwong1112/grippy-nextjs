@@ -87,7 +87,116 @@ const SECTIONS: Array<{
   { id: "results", title: "Analysis flow", roles: ["all", "decision", "lead"] },
   { id: "rounds", title: "Test rounds", roles: ["all", "lead", "decision"] },
   { id: "which", title: "Which page?", roles: ["all", "lead", "climber", "lab", "decision"] },
-  { id: "faq", title: "Troubleshooting", roles: ["all", "lead", "climber", "lab"] },
+  { id: "faq", title: "FAQ", roles: ["all", "lead", "climber", "lab", "decision"] },
+  { id: "tech", title: "Lead / tech", roles: ["all", "lead"] },
+];
+
+type FaqItem = { q: string; a: string; roles: RoleId[] };
+
+const TEAM_FAQ: FaqItem[] = [
+  {
+    q: "Which page should I open?",
+    a: "Scoring bags → /blind-test. Lab numbers → /blind-test/lab. Rankings & CSV → /blind-test/results. Learning the rules → this guide.",
+    roles: ["all", "climber", "lead", "lab", "decision"],
+  },
+  {
+    q: "What is the PIN vs the access key?",
+    a: "The 4-digit PIN unlocks the gym scoring page for climbers. The access key unlocks lab and results for internal staff only. Never share the access key on the floor.",
+    roles: ["all", "climber", "lead", "lab", "decision"],
+  },
+  {
+    q: "Someone asked what ratio Sample A is — what do I say?",
+    a: "Do not answer. Blindness is the point. Ratios are decoded later on /blind-test/results by the lead or analysis team.",
+    roles: ["all", "climber", "lead"],
+  },
+  {
+    q: "PIN wrong or locked out — who do I ask?",
+    a: "Ask the test lead. They set the PIN in WordPress → Settings → Blind Test. Do not guess the access key on the gym page.",
+    roles: ["all", "climber", "lead"],
+  },
+  {
+    q: "Can I change a score after Save?",
+    a: "Not from the phone form. If you mistyped, tell the lead — they can review entries in WordPress → Blind Scores and decide whether to re-score that sample.",
+    roles: ["all", "climber", "lead"],
+  },
+  {
+    q: "Skip vs score 3 — what’s the difference?",
+    a: "Skip / N/A means you did not rate that criterion (it is left out of the weighted average). Score 3 means you did rate it as average. Prefer Skip only when you truly could not judge that item.",
+    roles: ["all", "climber", "lead"],
+  },
+  {
+    q: "How many samples do I need to finish today?",
+    a: "Score every sample letter shown on the gym page (those are the bags enabled for this session). Ask the lead if you are unsure which bags are in play.",
+    roles: ["all", "climber", "lead"],
+  },
+  {
+    q: "Where do I change today’s PIN and which samples are enabled?",
+    a: "WordPress Admin → Settings → Blind Test. Update the PIN, tick enabled sample codes, map each code to a ratio, then Save. Tell the floor the new PIN.",
+    roles: ["all", "lead"],
+  },
+  {
+    q: "Someone submitted the same Sample twice — is that OK?",
+    a: "Yes. Extra submissions are kept and averaged in analysis. If it was a clear mistake, note it for the lead; they can ignore or delete that entry in Blind Scores if needed.",
+    roles: ["all", "lead", "climber"],
+  },
+  {
+    q: "How do I start a new session or round without confusing the team?",
+    a: "Announce the Round (R1/R2/R3) and gym before scoring starts. Change the default round or PIN in WP Settings if the session changes. Climbers must pick the correct Round on the gym form before scoring.",
+    roles: ["all", "lead"],
+  },
+  {
+    q: "Can I leave a lab cell empty?",
+    a: "Yes. Empty cells are fine — analysis only uses the values you entered. Fill what you measured; leave the rest blank rather than guessing.",
+    roles: ["all", "lab", "lead"],
+  },
+  {
+    q: "I saved the wrong Pass/Fail — how do I fix it?",
+    a: "Correct the gate dropdowns on /blind-test/lab for that ratio and round, then Save again. The same ratio+round row is updated.",
+    roles: ["all", "lab", "lead"],
+  },
+  {
+    q: "Do R1 / R2 / R3 need separate rows?",
+    a: "Yes. Switch the Round tabs at the top of the lab page and save each round’s measurements separately so multi-round averages and stability can be calculated.",
+    roles: ["all", "lab", "lead"],
+  },
+  {
+    q: "Why is a blend missing from the ranking?",
+    a: "Usually no gym scores yet for that sample, or a hard-gate Fail excluded it from lab recommendations. Check Blind Scores / Lab Data and the Gate column on Results.",
+    roles: ["all", "decision", "lead"],
+  },
+  {
+    q: "What does “diff < 0.3” mean in practice?",
+    a: "If two blends’ scores are within 0.3, treat them as a tie on performance. Prefer the more stable (lower SD) or lower-cost option instead of picking a tiny score winner.",
+    roles: ["all", "decision", "lead"],
+  },
+  {
+    q: "Who can see the CSV and decoded ratios?",
+    a: "Only people with the access key (lab / analysis / lead). Do not forward decoded CSVs or /blind-test/results to climbers — that breaks the blind.",
+    roles: ["all", "decision", "lead"],
+  },
+];
+
+const TECH_FAQ: FaqItem[] = [
+  {
+    q: "Lab or Results says access key is not set",
+    a: "The hosting env is missing BLIND_TEST_ACCESS_KEY. Add it in Vercel (same value as local .env.local), then Redeploy. Climbers never need this key.",
+    roles: ["all", "lead"],
+  },
+  {
+    q: "Incorrect access key",
+    a: "The env var exists, but what was typed does not match. Confirm the value with whoever manages Vercel / .env.local — do not paste it into the gym PIN pad.",
+    roles: ["all", "lead"],
+  },
+  {
+    q: "Gym form loads but saving fails / plugin errors",
+    a: "Confirm the Grippy Blind Test plugin is active on WordPress, and the Next.js app still has a working WP Application Password (same as Waitlist).",
+    roles: ["all", "lead"],
+  },
+  {
+    q: "No sample buttons on the gym form",
+    a: "No sample codes are enabled. In WP → Settings → Blind Test, enable at least one Sample and Save.",
+    roles: ["all", "lead"],
+  },
 ];
 
 export function BlindTestGuide() {
@@ -328,9 +437,19 @@ export function BlindTestGuide() {
                   "Confirm gym list and default round (R1/R2/R3)",
                   "Share PIN privately with floor staff",
                   "Share access key only with lab / analysis people",
-                  "Confirm Vercel has BLIND_TEST_ACCESS_KEY (Redeploy after adding)",
                 ]}
               />
+              <p className="mt-4 text-sm text-muted-foreground">
+                Hosting / env issues live under{" "}
+                <button
+                  type="button"
+                  onClick={() => scrollTo("tech")}
+                  className="underline"
+                >
+                  Lead / tech
+                </button>
+                .
+              </p>
             </GuideSection>
           ) : null}
 
@@ -490,53 +609,68 @@ export function BlindTestGuide() {
           ) : null}
 
           {visibleSections.some((s) => s.id === "faq") ? (
-            <GuideSection id="faq" title="Troubleshooting" kicker="Unstuck">
-              <div className="space-y-3">
-                {[
-                  {
-                    q: "Wrong PIN",
-                    a: "Check WP Settings → Blind Test. Do not type the access key here.",
-                  },
-                  {
-                    q: "BLIND_TEST_ACCESS_KEY is not set",
-                    a: "Add the env var on Vercel (or .env.local), then Redeploy / restart dev.",
-                  },
-                  {
-                    q: "Incorrect access key",
-                    a: "Env is set, but what you typed does not match the value.",
-                  },
-                  {
-                    q: "No sample buttons on gym form",
-                    a: "Enable sample codes in WP Settings → Blind Test.",
-                  },
-                  {
-                    q: "Climber asks “what ratio is A?”",
-                    a: "Do not answer. Decode later on /blind-test/results.",
-                  },
-                ].map((item) => (
-                  <details
-                    key={item.q}
-                    className="group border border-border bg-chalk/40 open:bg-accent/20"
-                  >
-                    <summary className="cursor-pointer list-none px-4 py-4 font-medium text-ink marker:content-none [&::-webkit-details-marker]:hidden">
-                      <span className="flex items-center justify-between gap-3">
-                        {item.q}
-                        <span className="text-mist transition-transform group-open:rotate-45">
-                          +
-                        </span>
-                      </span>
-                    </summary>
-                    <p className="border-t border-border/60 px-4 py-3 text-sm text-muted-foreground">
-                      {item.a}
-                    </p>
-                  </details>
-                ))}
-              </div>
+            <GuideSection id="faq" title="FAQ" kicker="Team questions">
+              <p className="text-muted-foreground">
+                Practical answers for the floor, lab, and decision table.
+                {role !== "all"
+                  ? " Showing items for your selected role."
+                  : null}
+              </p>
+              <FaqList
+                items={TEAM_FAQ.filter((item) => item.roles.includes(role))}
+              />
+            </GuideSection>
+          ) : null}
+
+          {visibleSections.some((s) => s.id === "tech") ? (
+            <GuideSection
+              id="tech"
+              title="Lead / tech only"
+              kicker="Skip if you are scoring bags"
+            >
+              <p className="text-muted-foreground">
+                Setup and hosting issues — climbers and most R&D staff can ignore
+                this block.
+              </p>
+              <FaqList items={TECH_FAQ} />
             </GuideSection>
           ) : null}
         </div>
       </div>
 
+    </div>
+  );
+}
+
+function FaqList({ items }: { items: Array<{ q: string; a: string }> }) {
+  if (!items.length) {
+    return (
+      <p className="mt-6 text-sm text-muted-foreground">
+        No FAQ items for this role — switch to Overview or another role.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-6 space-y-3">
+      {items.map((item) => (
+        <details
+          key={item.q}
+          className="group border border-border bg-chalk/40 open:bg-accent/20"
+        >
+          <summary className="cursor-pointer list-none px-4 py-4 font-medium text-ink marker:content-none [&::-webkit-details-marker]:hidden">
+            <span className="flex items-center justify-between gap-3">
+              {item.q}
+              <span className="text-mist transition-transform group-open:rotate-45">
+                +
+              </span>
+            </span>
+          </summary>
+          <p className="border-t border-border/60 px-4 py-3 text-sm text-muted-foreground">
+            {item.a}
+          </p>
+        </details>
+      ))}
     </div>
   );
 }
