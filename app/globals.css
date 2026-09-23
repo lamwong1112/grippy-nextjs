@@ -91,6 +91,23 @@
   --sidebar-ring: #5ba8a0;
 }
 
+@keyframes guide-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-guide-rise {
+    animation: guide-rise 0.6s ease-out both;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

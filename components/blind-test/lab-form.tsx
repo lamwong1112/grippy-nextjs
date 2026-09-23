@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { AccessGate } from "@/components/blind-test/access-gate";
+import { BlindTestNav } from "@/components/blind-test/blind-test-nav";
 import {
   BLEND_RATIOS,
   type LabMeasurementEntry,
@@ -235,9 +236,12 @@ export function LabEntryApp() {
     <div className="mx-auto max-w-[1400px] px-4 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-salt">
-            Internal
-          </p>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-salt">
+              Internal
+            </p>
+            <BlindTestNav current="lab" />
+          </div>
           <h1 className="font-heading text-3xl font-semibold text-ink">
             Lab measurements
           </h1>

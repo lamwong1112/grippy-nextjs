@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -77,6 +78,13 @@ export function AccessGate({
           {loading ? "Checking…" : "Unlock"}
         </button>
       </form>
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        Lost? Read the{" "}
+        <Link href="/blind-test/guide" className="text-ink underline">
+          Blind Test Protocol
+        </Link>
+        .
+      </p>
     </div>
   );
 }

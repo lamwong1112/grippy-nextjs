@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { BlindTestNav } from "@/components/blind-test/blind-test-nav";
 import { cn } from "@/lib/utils";
 
 type ScoreField = {
@@ -247,9 +248,12 @@ export function GymBlindTestForm() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col px-4 py-6 pb-24">
       <header className="mb-6">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-salt">
-          Grippy research
-        </p>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-salt">
+            Grippy research
+          </p>
+          <BlindTestNav current="gym" />
+        </div>
         <h1 className="mt-1 font-heading text-3xl font-semibold tracking-tight text-ink">
           Blind test
         </h1>

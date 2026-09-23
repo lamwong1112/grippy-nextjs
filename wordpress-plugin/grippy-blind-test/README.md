@@ -37,6 +37,13 @@ BLIND_TEST_ACCESS_KEY=choose-a-long-secret-for-lab-and-results
 
 `BLIND_TEST_ACCESS_KEY` unlocks `/blind-test/lab` and `/blind-test/results` in the Next.js app (not the WordPress admin password).
 
+## Team protocol
+
+Share this with everyone before a session:
+
+- Frontend knowledge base: `/blind-test/guide`
+- Markdown copy in the Next.js repo: `docs/blind-test-protocol.md`
+
 ## REST endpoints
 
 | Method | Path | Auth |
