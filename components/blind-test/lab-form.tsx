@@ -39,6 +39,150 @@ type LabDraft = {
 
 const EMPTY_NUM = "";
 
+type FieldGuide = {
+  key: keyof LabDraft | "feel" | GateField | "ratio";
+  label: string;
+  unit: string;
+  meaning: string;
+  example: string;
+  better: string;
+  notThis: string;
+};
+
+/** Shown above the table so staff know raw values vs 1–5 scores. */
+const FIELD_GUIDE: FieldGuide[] = [
+  {
+    key: "friction_coef",
+    label: "Friction",
+    unit: "coefficient (instrument)",
+    meaning: "Lab friction coefficient from your test method.",
+    example: "0.72",
+    better: "Higher is better",
+    notThis: "Do not enter a 1–5 score here.",
+  },
+  {
+    key: "d50",
+    label: "D50",
+    unit: "μm",
+    meaning: "Median particle size (D50).",
+    example: "30",
+    better: "Reference; scoring leans on PSD SD + Feel",
+    notThis: "Not a blend ratio (e.g. not 30:70).",
+  },
+  {
+    key: "particle_sd",
+    label: "PSD SD",
+    unit: "same scale as D50",
+    meaning: "Particle-size spread (standard deviation). More uniform → lower SD.",
+    example: "9",
+    better: "Lower is better",
+    notThis: "Do not enter a 1–5 score.",
+  },
+  {
+    key: "moist_pct",
+    label: "Moist%",
+    unit: "% moisture",
+    meaning: "Moisture content as a percent. Use one convention for the whole table.",
+    example: "0.5 (= 0.5%)",
+    better: "Lower is better",
+    notThis: "Do not enter 50 if you mean 0.5%.",
+  },
+  {
+    key: "abs_s",
+    label: "Abs(s)",
+    unit: "seconds",
+    meaning: "Time to recover dryness after sweat / humidity challenge.",
+    example: "40",
+    better: "Lower is better (recovers faster)",
+    notThis: "Seconds, not minutes.",
+  },
+  {
+    key: "pm25",
+    label: "PM2.5",
+    unit: "your meter’s unit",
+    meaning: "Dust / airborne particulate reading. Same instrument for every row.",
+    example: "14",
+    better: "Lower is better",
+    notThis: "Do not mix units across rows.",
+  },
+  {
+    key: "caking_30d",
+    label: "Caking",
+    unit: "your 30-day scale (e.g. 0–5)",
+    meaning: "Caking severity after aging. Pick one scale and use it for every ratio.",
+    example: "0=none … 5=severe",
+    better: "Lower is better",
+    notThis: "Do not switch between % and 0–5 mid-study.",
+  },
+  {
+    key: "re_chalk",
+    label: "Re-chalk",
+    unit: "attempts per application",
+    meaning: "How many climbing attempts one chalking lasts.",
+    example: "7",
+    better: "Higher is better",
+    notThis: "Count of attempts, not a 1–5 score.",
+  },
+  {
+    key: "cost_per_g",
+    label: "Cost/g",
+    unit: "currency per gram (e.g. HKD/g)",
+    meaning: "Ingredient / production cost per gram. Same currency for every row.",
+    example: "0.16",
+    better: "Lower is better",
+    notThis: "Per gram — not total bag cost.",
+  },
+  {
+    key: "feel",
+    label: "Feel",
+    unit: "1–5 only",
+    meaning: "Lab hand-feel rating. This is the only column that uses the scorecard 1–5 scale directly.",
+    example: "4",
+    better: "Higher is better",
+    notThis: "Do not put instrument readings here.",
+  },
+  {
+    key: "gate_impurities",
+    label: "Impurities",
+    unit: "Pass / Fail",
+    meaning: "Hard gate: Cl+K+S+Na within limit.",
+    example: "Pass",
+    better: "Must Pass to be recommended",
+    notThis: "Fail excludes the blend from recommendations.",
+  },
+  {
+    key: "gate_heavy_metals",
+    label: "Metals",
+    unit: "Pass / Fail",
+    meaning: "Hard gate: Pb / As / Cd under regulatory limits.",
+    example: "Pass",
+    better: "Must Pass to be recommended",
+    notThis: "Leave blank if not tested yet.",
+  },
+  {
+    key: "gate_caking",
+    label: "Caking gate",
+    unit: "Pass / Fail",
+    meaning: "Hard gate: no severe caking after 30-day aging.",
+    example: "Pass",
+    better: "Must Pass to be recommended",
+    notThis: "Different from the numeric Caking column.",
+  },
+  {
+    key: "gate_skin_safety",
+    label: "Skin",
+    unit: "Pass / Fail",
+    meaning: "Hard gate: no allergy / irritation in the agreed skin-safety check.",
+    example: "Pass",
+    better: "Must Pass to be recommended",
+    notThis: "Leave blank if pending.",
+  },
+];
+
+const GUIDE_BY_KEY = Object.fromEntries(
+  FIELD_GUIDE.map((f) => [f.key, f])
+) as Record<string, FieldGuide>;
+
 function entryToDraft(entry: LabMeasurementEntry): LabDraft {
   const str = (v: number | null) => (v == null ? EMPTY_NUM : String(v));
   return {
@@ -99,6 +243,7 @@ export function LabEntryApp() {
   const [error, setError] = useState<string | null>(null);
   const [savingRatio, setSavingRatio] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showGuide, setShowGuide] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -245,8 +390,11 @@ export function LabEntryApp() {
           <h1 className="font-heading text-3xl font-semibold text-ink">
             Lab measurements
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Enter raw values by ratio. Normalization runs on the results page.
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            Enter <strong className="font-medium text-ink">raw instrument values</strong>
+            {" "}
+            (not 1–5 scores), except <strong className="font-medium text-ink">Feel</strong>.
+            Leave untested cells empty. Same units across every ratio.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -265,6 +413,13 @@ export function LabEntryApp() {
           ))}
           <button
             type="button"
+            onClick={() => setShowGuide((v) => !v)}
+            className="h-11 border border-border px-4 text-sm"
+          >
+            {showGuide ? "Hide field guide" : "Show field guide"}
+          </button>
+          <button
+            type="button"
             onClick={() => void loadEntries()}
             className="h-11 border border-border px-4 text-sm"
           >
@@ -272,6 +427,50 @@ export function LabEntryApp() {
           </button>
         </div>
       </div>
+
+      {showGuide ? (
+        <div className="mt-6 border border-border bg-chalk/60">
+          <div className="border-b border-border bg-secondary/80 px-4 py-3">
+            <p className="font-heading text-lg font-semibold text-ink">
+              Field guide — what to type
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Hover a column header in the table for a short tip. Examples below
+              are illustrative only.
+            </p>
+          </div>
+          <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-3">
+            {FIELD_GUIDE.map((f) => (
+              <article
+                key={f.key}
+                className="border-b border-border px-4 py-4 sm:border-r last:border-b-0"
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <h3 className="font-semibold text-ink">{f.label}</h3>
+                  <span className="font-mono text-[11px] text-mist">{f.unit}</span>
+                </div>
+                <p className="mt-2 text-sm leading-snug text-muted-foreground">
+                  {f.meaning}
+                </p>
+                <dl className="mt-3 space-y-1 text-xs">
+                  <div className="flex gap-2">
+                    <dt className="shrink-0 text-mist">Example</dt>
+                    <dd className="font-mono text-ink">{f.example}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="shrink-0 text-mist">Direction</dt>
+                    <dd className="text-ink">{f.better}</dd>
+                  </div>
+                  <div className="flex gap-2">
+                    <dt className="shrink-0 text-mist">Avoid</dt>
+                    <dd className="text-ink">{f.notThis}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {loading ? (
         <p className="mt-6 text-muted-foreground">Loading…</p>
@@ -291,18 +490,65 @@ export function LabEntryApp() {
         <table className="min-w-[1100px] w-full border-collapse text-sm">
           <thead className="bg-secondary text-left">
             <tr>
-              <th className="sticky left-0 z-10 bg-secondary px-3 py-3">Ratio</th>
-              {numFields.map((f) => (
-                <th key={f.key} className="px-2 py-3 font-medium">
-                  {f.label}
-                </th>
-              ))}
-              <th className="px-2 py-3">Feel</th>
-              {gates.map((g) => (
-                <th key={g.key} className="px-2 py-3">
-                  {g.label}
-                </th>
-              ))}
+              <th className="sticky left-0 z-10 bg-secondary px-3 py-3">
+                Ratio
+                <span className="mt-0.5 block text-[10px] font-normal text-mist">
+                  sea:mineral
+                </span>
+              </th>
+              {numFields.map((f) => {
+                const guide = GUIDE_BY_KEY[f.key];
+                return (
+                  <th
+                    key={f.key}
+                    className="px-2 py-3 font-medium"
+                    title={
+                      guide
+                        ? `${guide.meaning} Example: ${guide.example}. ${guide.notThis}`
+                        : undefined
+                    }
+                  >
+                    {f.label}
+                    {guide ? (
+                      <span className="mt-0.5 block text-[10px] font-normal text-mist">
+                        e.g. {guide.example}
+                      </span>
+                    ) : null}
+                  </th>
+                );
+              })}
+              <th
+                className="px-2 py-3"
+                title={
+                  GUIDE_BY_KEY.feel
+                    ? `${GUIDE_BY_KEY.feel.meaning} ${GUIDE_BY_KEY.feel.notThis}`
+                    : undefined
+                }
+              >
+                Feel
+                <span className="mt-0.5 block text-[10px] font-normal text-mist">
+                  1–5 only
+                </span>
+              </th>
+              {gates.map((g) => {
+                const guide = GUIDE_BY_KEY[g.key];
+                return (
+                  <th
+                    key={g.key}
+                    className="px-2 py-3"
+                    title={
+                      guide
+                        ? `${guide.meaning} ${guide.notThis}`
+                        : undefined
+                    }
+                  >
+                    {g.label}
+                    <span className="mt-0.5 block text-[10px] font-normal text-mist">
+                      Pass/Fail
+                    </span>
+                  </th>
+                );
+              })}
               <th className="px-3 py-3">Save</th>
             </tr>
           </thead>
@@ -312,26 +558,38 @@ export function LabEntryApp() {
                 <td className="sticky left-0 z-10 bg-background px-3 py-2 font-semibold">
                   {draft.ratio}
                 </td>
-                {numFields.map((f) => (
-                  <td key={f.key} className="px-1 py-1">
-                    <input
-                      value={String(draft[f.key] ?? "")}
-                      onChange={(e) =>
-                        updateDraft(draft.ratio, {
-                          [f.key]: e.target.value,
-                        } as Partial<LabDraft>)
-                      }
-                      inputMode="decimal"
-                      className="h-10 w-20 border border-border bg-chalk px-2 outline-none focus:ring-1 focus:ring-salt"
-                    />
-                  </td>
-                ))}
+                {numFields.map((f) => {
+                  const guide = GUIDE_BY_KEY[f.key];
+                  return (
+                    <td key={f.key} className="px-1 py-1">
+                      <input
+                        value={String(draft[f.key] ?? "")}
+                        onChange={(e) =>
+                          updateDraft(draft.ratio, {
+                            [f.key]: e.target.value,
+                          } as Partial<LabDraft>)
+                        }
+                        inputMode="decimal"
+                        placeholder={guide?.example.split(" ")[0] ?? ""}
+                        aria-label={`${f.label} for ${draft.ratio}`}
+                        title={
+                          guide
+                            ? `${guide.meaning} Example: ${guide.example}`
+                            : undefined
+                        }
+                        className="h-10 w-20 border border-border bg-chalk px-2 outline-none focus:ring-1 focus:ring-salt"
+                      />
+                    </td>
+                  );
+                })}
                 <td className="px-1 py-1">
                   <select
                     value={draft.feel}
                     onChange={(e) =>
                       updateDraft(draft.ratio, { feel: e.target.value })
                     }
+                    aria-label={`Feel for ${draft.ratio}`}
+                    title={GUIDE_BY_KEY.feel?.meaning}
                     className="h-10 border border-border bg-chalk px-1"
                   >
                     <option value="">—</option>
@@ -351,6 +609,8 @@ export function LabEntryApp() {
                           [g.key]: e.target.value,
                         } as Partial<LabDraft>)
                       }
+                      aria-label={`${g.label} for ${draft.ratio}`}
+                      title={GUIDE_BY_KEY[g.key]?.meaning}
                       className="h-10 border border-border bg-chalk px-1"
                     >
                       <option value="">—</option>
@@ -376,7 +636,7 @@ export function LabEntryApp() {
       </div>
 
       <p className="mt-6 text-sm text-muted-foreground">
-        Hard-gate fail marks a ratio as “not recommended” in analysis.{" "}
+        Hard-gate Fail marks a ratio as “not recommended” in analysis.{" "}
         <a href="/blind-test/results" className="underline">
           Open results
         </a>
