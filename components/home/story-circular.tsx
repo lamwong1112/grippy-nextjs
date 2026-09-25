@@ -13,8 +13,9 @@ export function StoryCircular() {
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-chalk/70">
               We turn desalination brine — a by-product of seawater purification —
-              into climbing chalk. No open-pit mining. A circular feedstock for
-              the powder that keeps you on the wall.
+              into climbing chalk, then blend a touch of traditional mineral chalk
+              for feel. Circular-first feedstock for the powder that keeps you on
+              the wall — with less mining than conventional chalk.
             </p>
           </div>
         </Reveal>

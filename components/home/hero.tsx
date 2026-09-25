@@ -22,10 +22,10 @@ export function HomeHero() {
           Grippy
         </p>
         <h1 className="mt-4 max-w-xl animate-in fade-in slide-in-from-bottom-3 fill-mode-both text-lg text-chalk/85 delay-100 duration-700 md:text-xl">
-          Sustainable chalk from seawater — built for Hong Kong humidity.
+          Sustainable chalk, mostly from seawater — built for Hong Kong humidity.
         </h1>
         <p className="mt-3 max-w-md animate-in fade-in slide-in-from-bottom-3 fill-mode-both text-sm leading-relaxed text-chalk/65 delay-150 duration-700">
-          Zero mining. Cleaner grip. Packs and a click-press dispenser made for
+          Less mining. Cleaner grip. Packs and a click-press dispenser made for
           sticky air and long sessions.
         </p>
         <div className="mt-8 flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-3 fill-mode-both delay-200 duration-700">

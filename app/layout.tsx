@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s · Grippy",
   },
   description:
-    "Sustainable climbing chalk from seawater — built for Hong Kong humidity. Zero mining, cleaner grip, direct to climbers.",
+    "Sustainable climbing chalk, mostly from seawater — built for Hong Kong humidity. Less mining, cleaner grip, direct to climbers.",
 };
 
 export default async function RootLayout({

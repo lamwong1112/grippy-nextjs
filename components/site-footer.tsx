@@ -9,7 +9,7 @@ export function SiteFooter() {
             Grippy
           </p>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-chalk/65">
-            Seawater chalk for humid gyms — zero mining, direct to climbers.
+            Seawater-led chalk for humid gyms — less mining, direct to climbers.
           </p>
         </div>
         <div className="flex flex-wrap gap-6 text-sm text-chalk/70">
