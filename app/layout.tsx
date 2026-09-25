@@ -21,7 +21,11 @@ export const metadata: Metadata = {
     template: "%s · Grippy",
   },
   description:
-    "Sustainable climbing chalk, mostly from seawater — built for Hong Kong humidity. Less mining, cleaner grip, direct to climbers.",
+    "High-friction climbing chalk upcycled from ocean brine. Engineered for humid gyms and slick holds—maximum grip with zero open-pit mining.",
+  openGraph: {
+    description:
+      "High-friction climbing chalk upcycled from ocean brine. Engineered for humid gyms and slick holds—maximum grip with zero open-pit mining.",
+  },
 };
 
 export default async function RootLayout({

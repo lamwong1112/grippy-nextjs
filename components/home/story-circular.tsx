@@ -12,10 +12,11 @@ export function StoryCircular() {
               From brine to chalk
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-chalk/70">
-              We turn desalination brine — a by-product of seawater purification —
-              into climbing chalk, then blend a touch of traditional mineral chalk
-              for feel. Circular-first feedstock for the powder that keeps you on
-              the wall — with less mining than conventional chalk.
+              We capture mineral-rich brine from seawater desalination and upcycle
+              it into high-purity magnesium carbonate. To hit the ideal tactile
+              grit on rock and plastic, we blend it with mineral chalk for
+              balanced moisture absorption. The result: pure friction, zero heavy
+              footprint.
             </p>
           </div>
         </Reveal>
